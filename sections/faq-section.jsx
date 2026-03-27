@@ -7,28 +7,28 @@ export default function FaqSection() {
     const [isOpen, setIsOpen] = useState(false);
     const data = [
         {
-            question: 'Do I need coding or design experience to use PrebuiltUI?',
-            answer: "Basic coding knowledge (HTML/CSS, Tailwind) helps, but advanced design skills aren't required. You can use components as-is or customize them.",
+            question: 'What is this AI Short Ad Generator?',
+            answer: 'It is a full-stack AI-powered platform that generates short, engaging advertisements from simple inputs like product details, audience, and tone.',
         },
         {
-            question: 'What is PrebuiltUI and how does it help developers and designers?',
-            answer: 'PrebuiltUI provides ready-to-use, customizable UI components and templates, saving time for developers and designers.',
+            question: 'Do I need any technical or marketing experience to use it?',
+            answer: "No. The platform is designed for non-technical users as well. Just provide basic inputs, and the AI handles script generation, structure, and creativity.",
         },
         {
-            question: 'Can I use PrebuiltUI components in my existing project?',
-            answer: 'Yes, components can be integrated into HTML, React, Next.js, Vue, and other projects using Tailwind CSS.',
+            question: 'What kind of ads can I generate?',
+            answer: 'You can generate short-form ads for social media platforms like Instagram, YouTube Shorts, and TikTok, including product promos, brand awareness ads, and call-to-action content.',
         },
         {
-            question: 'How customizable are the generated components?',
-            answer: 'Components are highly customizable with Tailwind utility classes, theming, and structural adjustments.',
+            question: 'Can I customize the generated ads?',
+            answer: 'Yes. You can modify tone, target audience, ad length, style, and messaging to align with your brand voice.',
         },
         {
-            question: 'Does PrebuiltUI support team collaboration?',
-            answer: "There's no clear documentation on built-in collaboration features. Check their support for team options.",
+            question: 'How does the AI generate ads?',
+            answer: 'The system uses advanced AI models to analyze your input and generate optimized ad scripts based on marketing patterns, audience psychology, and engagement strategies.',
         },
         {
-            question: 'Can I try PrebuiltUI before purchasing a plan?',
-            answer: 'Yes, you can try PrebuiltUI with full access to features.',
+            question: 'Is this suitable for startups and small businesses?',
+            answer: 'Yes. It is especially useful for startups, creators, and small businesses looking to produce high-quality ads quickly without hiring professional copywriters.',
         },
     ];
 

@@ -7,44 +7,44 @@ export default function Testimonials() {
     const ref = useRef([]);
     const data = [
         {
-            review: 'Super clean and easy to use. These Tailwind + React components saved me hours of dev time and countless lines of extra code!',
+            review: 'This tool helped me create ad scripts in seconds. Perfect for quick campaigns without hiring a copywriter.',
             name: 'Richard Nelson',
-            about: 'Founder & CEO',
+            about: 'Startup Founder',
             rating: 5,
             image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200',
         },
         {
-            review: 'The design quality is top-notch. Perfect balance between simplicity and style. Highly recommend for any creative developer!',
+            review: 'The AI understands tone and audience really well. My Instagram ads are performing much better now.',
             name: 'Sophia Martinez',
-            about: 'Founder & CEO',
+            about: 'Digital Marketer',
             rating: 5,
             image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200',
         },
         {
-            review: 'Absolutely love the reusability of these components. My workflow feels 10x faster now with cleaner and more consistent layouts.',
+            review: 'Super fast and efficient. I can generate multiple ad variations instantly and test them easily.',
             name: 'Ethan Roberts',
-            about: 'Founder & CEO',
+            about: 'Growth Hacker',
             rating: 5,
             image: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=200&auto=format&fit=crop&q=60',
         },
         {
-            review: 'Clean, elegant, and efficient. These components are a dream for any modern web developer who values beautiful code.',
+            review: 'Clean interface and powerful output. It saves hours of brainstorming and writing.',
             name: 'Isabella Kim',
-            about: 'Founder & CEO',
+            about: 'Content Creator',
             rating: 5,
             image: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=60',
         },
         {
-            review: "I've tried dozens of UI kits, but this one just feels right. Everything works seamlessly and looks incredibly polished.",
+            review: "Finally a tool that actually generates usable ads. The scripts feel natural and engaging.",
             name: 'Liam Johnson',
-            about: 'Founder & CEO',
+            about: 'E-commerce Owner',
             rating: 5,
             image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=100&h=100&auto=format&fit=crop',
         },
         {
-            review: 'Brilliantly structured components with clean, modern styling. Makes development a joy and design updates super quick.',
+            review: 'Great for small businesses. I can now create ads without any marketing background.',
             name: 'Ava Patel',
-            about: 'Founder & CEO',
+            about: 'Small Business Owner',
             rating: 5,
             image: 'https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/userImage/userImage1.png',
         },
@@ -52,8 +52,8 @@ export default function Testimonials() {
     return (
         <section className="mt-32 flex flex-col items-center">
             <SectionTitle
-                title="Here what aur trusted users about our best AI agents."
-                description="Empower your business with AI agents that optimize processes and accelerate performance."
+                title="What our users say about the AI Ad Generator"
+                description="See how creators, marketers, and businesses are generating high-converting ads in seconds."
             />
             <div className='mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
                 {data.map((item, index) => (

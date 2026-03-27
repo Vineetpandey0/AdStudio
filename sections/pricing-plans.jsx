@@ -8,51 +8,51 @@ export default function PricingPlans() {
     const data = [
         {
             icon: RocketIcon,
-            title: 'Starter',
-            description: 'For individuals and small teams',
-            price: '$19',
+            title: 'Free',
+            description: 'For individuals getting started ',
+            price: '$0',
             buttonText: 'Get Started',
             features: [
-                'Up to 10 projects',
-                '10 AI tasks/month',
-                'Basic text generation',
-                'Simple chatbot access',
-                'Email support only',
-                'Community resources'
+                'Up to 5 ad generations/month',
+                'Basic ad script generation',
+                'Limited tone & style options',
+                'Standard output quality',
+                'Community support',
+                'Basic editing access'
             ],
         },
         {
             icon: ZapIcon,
             title: 'Professional',
-            description: 'For growing teams and startups',
+            description: 'For creators, marketers, and startups',
             price: '$49',
             mostPopular: true,
             buttonText: 'Upgrade Now',
             features: [
-                'Unlimited AI tasks',
-                'API integration',
-                'Text & image outputs',
+                'Unlimited ad generations',
+                'Advanced tone & audience targeting',
+                'Multiple ad variations',
+                'High-quality optimized scripts',
                 'Priority chat & email support',
-                'Detailed analytics',
-                'Team collaboration'
+                'Analytics & performance insights'
             ],
         },
         {
             icon: CrownIcon,
             title: 'Enterprise',
-            description: 'For enterprises and agencies',
+            description: 'For agencies and large teams',
             price: '$149',
             buttonText: 'Contact Sales',
             features: [
-                'Custom AI models',
-                'Team access control',
+                'Custom AI ad models',
+                'Team collaboration & roles',
                 'Dedicated account manager',
-                'Secure private API',
-                'SLA uptime guarantee',
+                'Private & secure API access',
+                'Advanced analytics dashboard',
                 '24/7 premium support'
             ],
         },
-    ];
+];
 
     return (
         <section className="mt-32">
