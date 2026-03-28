@@ -49,11 +49,11 @@ export default function Navbar() {
                 viewport={{ once: true }}
                 transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1 }}
             >
-                <a href='https://prebuiltui.com?utm_source=AdStudio'>
+                <Link href='/'>
                     <span className="text-3xl font-semibold tracking-tight text-white">
                         AdStudio
                     </span>
-                </a>
+                </Link>
 
                 <div className='hidden items-center space-x-10 md:flex'>
                     {links.map((link) => (

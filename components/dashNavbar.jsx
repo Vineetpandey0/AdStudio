@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useUser } from '@clerk/nextjs';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function DashboardNavbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,9 +23,9 @@ export default function DashboardNavbar() {
         transition={{ type: 'spring', stiffness: 200, damping: 30 }}
       >
         {/* Logo */}
-        <div className="text-xl font-semibold tracking-tight text-white">
+        <Link href="/" className="text-xl font-semibold tracking-tight text-white">
           AdStudio
-        </div>
+        </Link>
 
         {/* Desktop Right Section */}
         <div className="hidden md:flex items-center gap-6">
