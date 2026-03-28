@@ -1,17 +1,61 @@
 'use client';
 
-import { useState } from "react";
+import axios from "axios";
+import { useRef, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function ProductVisualizer() {
   const [productImage, setProductImage] = useState(null);
   const [modelImage, setModelImage] = useState(null);
   const [prompt, setPrompt] = useState('');
+  const [progress, setProgress] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [isUploaded, setIsUploaded] = useState(false);
+  const inputRef = useRef(null);
 
-  const uploadFiles = () => {
-    // Handle file uploads and prompt submission logic here
-    console.log('Product Image:', productImage);
-    console.log('Model Image:', modelImage);
-    console.log('Prompt:', prompt);
+  const uploadFiles = async () => {
+
+    if (!productImage || !modelImage) {
+      toast.error("No file selected")
+      return
+    }
+
+    try {
+      setLoading(true)
+      setProgress(0)
+
+      const formData = new FormData()
+      formData.append("productImageFile", productImage)
+      formData.append("modelImageFile", modelImage)
+      formData.append("caption", prompt)
+
+      const response = await axios.post('/api/fileUpload', formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (event) => {
+          if (event.total) {
+            const percent = Math.round((event.loaded * 100) / event.total)
+            setProgress(percent)
+          }
+        }
+      })
+
+      console.log(response.data)
+
+      toast.success("File uploaded successfully")
+      setIsUploaded(true)
+      if (inputRef.current) inputRef.current.value = ""
+      setProductImage(null)
+      setModelImage(null)
+      setPrompt("")
+    } catch (error) {
+      console.error("Upload error:", error.message)
+      toast.error("Error uploading file")
+    } finally {
+      setTimeout(() => setProgress(0), 1000) // Let user see 100% before reset
+      setLoading(false)
+    }
   }
   return (
     <div className="bg-background text-on-background font-body min-h-screen flex flex-col">
@@ -45,9 +89,10 @@ export default function ProductVisualizer() {
 
                   <input
                     type="file"
+                    ref={inputRef}
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => setProductImage(e.target.files[0])}
+                    onChange={(e) => setProductImage(e.target?.files?.[0] || null)}
                   />
                 </label>
               </div>
@@ -62,9 +107,10 @@ export default function ProductVisualizer() {
 
                   <input
                     type="file"
+                    ref={inputRef}
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => setModelImage(e.target.files[0])}
+                    onChange={(e) => setModelImage(e.target?.files?.[0] || null)}
                   />
                 </label>
               </div>
@@ -93,11 +139,15 @@ export default function ProductVisualizer() {
             {/* CTA */}
             <footer className="flex flex-col items-center gap-4 py-8">
               <button
-                disabled={!productImage || !modelImage || !prompt}
-                className="w-full max-w-md py-5 rounded-lg font-bold bg-gray-700 text-gray-400 cursor-not-allowed"
+                disabled={loading}
+                className={`w-full max-w-md py-5 rounded-lg font-bold transition-colors ${
+                  loading
+                    ? "bg-gray-700 text-gray-400 cursor-not-allowed opacity-50"
+                    : "bg-primary text-on-primary cursor-pointer hover:bg-primary-dark"
+                }`}
                 onClick={uploadFiles}
               >
-                Generate Image
+                {loading ? "Generating..." : "Generate Image"}
               </button>
               <p className="text-xs text-gray-400">
                 Upload images and provide a prompt to unlock generation
