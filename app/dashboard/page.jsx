@@ -59,7 +59,7 @@ export default function ProductVisualizer() {
                   <div className="w-12 h-12 rounded-full bg-surface-bright flex items-center justify-center">
                     +
                   </div>
-                  <p className="text-sm">Upload Product Image</p>
+                  <p className="text-sm">Upload Your Product Image</p>
                 </div>
               </div>
 
