@@ -6,15 +6,20 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { motion } from "framer-motion";
+import { useUser } from '@clerk/nextjs';
+
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const pathname = usePathname();
 
+    const { isSignedIn, user, isLoaded } = useUser();
+    console.log(user)
+    
     const links = [
         { name: 'Home', href: '/' },
-        { name: 'Agents', href: '#agents' },
+        { name: 'Agents', href: '/agents' },
         { name: 'Use Cases', href: '#use-cases' },
         { name: 'Pricing', href: '#pricing' },
         { name: 'Docs', href: '#docs' }
