@@ -12,11 +12,7 @@ import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
 export default function Page() {
-    const router = useRouter()
-    const {userid} = useAuth();
-    if (!userid) {
-        router.push('/sign-up')
-    }
+    
     return (
         <main className='px-4'>
             <HeroSection />
