@@ -1,6 +1,7 @@
 import { Poppins } from 'next/font/google';
 import './globals.css';
 import LenisScroll from '@/components/lenis-scroll';
+import { ClerkProvider } from '@clerk/nextjs'
 
 const poppins = Poppins({
     subsets: ['latin'],
@@ -10,9 +11,11 @@ const poppins = Poppins({
 
 export default function RootLayout({ children }) {
     return (
-        <html lang='en'>
-            <LenisScroll />
-            <body>{children}</body>
-        </html>
+        <ClerkProvider>
+            <html lang='en'>
+                <LenisScroll />
+                <body>{children}</body>
+            </html>
+        </ClerkProvider>
     );
 }
