@@ -1,15 +1,15 @@
 {
-  "name": "AdStudio - PrebuiltUI",
+  "name": "AdStudio - Generate Ads with AI",
   "short_name": "AdStudio",
   "icons": [
     {
-      "src": "/assets/web-app-manifest-192x192.png",
+      "src": "#",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/assets/web-app-manifest-512x512.png",
+      "src": "#",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

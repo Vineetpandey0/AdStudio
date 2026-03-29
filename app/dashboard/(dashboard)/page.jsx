@@ -1,161 +1,192 @@
 'use client';
 
-import axios from "axios";
-import { useRef, useState } from "react";
-import toast from "react-hot-toast";
+import { useRef, useState } from 'react';
+import { Sparkles, Upload, Loader2 } from 'lucide-react';
 
-export default function ProductVisualizer() {
+export default function DashboardPage() {
   const [productImage, setProductImage] = useState(null);
-  const [modelImage, setModelImage] = useState(null);
+  const [productPreview, setProductPreview] = useState(null);
   const [prompt, setPrompt] = useState('');
-  const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [isUploaded, setIsUploaded] = useState(false);
+  const [error, setError] = useState(null);
+  const [generatedUrl, setGeneratedUrl] = useState(null);
   const inputRef = useRef(null);
 
-  const uploadFiles = async () => {
+  const handleImageChange = (e) => {
+    const file = e.target?.files?.[0] || null;
+    setProductImage(file);
+    if (file) {
+      setProductPreview(URL.createObjectURL(file));
+    } else {
+      setProductPreview(null);
+    }
+  };
 
-    if (!productImage || !modelImage) {
-      toast.error("No file selected")
-      return
+  const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      setError('Please enter a prompt describing your ad.');
+      return;
     }
 
     try {
-      setLoading(true)
-      setProgress(0)
+      setLoading(true);
+      setError(null);
+      setGeneratedUrl(null);
 
-      const formData = new FormData()
-      formData.append("productImageFile", productImage)
-      formData.append("modelImageFile", modelImage)
-      formData.append("caption", prompt)
+      let referenceImageUrl = null;
 
-      const response = await axios.post('/api/fileUpload', formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (event) => {
-          if (event.total) {
-            const percent = Math.round((event.loaded * 100) / event.total)
-            setProgress(percent)
-          }
+      // Upload reference image first if provided
+      if (productImage) {
+        const formData = new FormData();
+        formData.append('file', productImage);
+
+        const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
+        const uploadData = await uploadRes.json();
+
+        if (!uploadRes.ok) {
+          throw new Error(uploadData.error || 'Image upload failed');
         }
-      })
+        referenceImageUrl = uploadData.data.url;
+      }
 
-      console.log(response.data)
+      // Generate ad
+      const generateRes = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: prompt.trim(),
+          style: 'minimalist',
+          referenceImageUrl,
+        }),
+      });
 
-      toast.success("File uploaded successfully")
-      setIsUploaded(true)
-      if (inputRef.current) inputRef.current.value = ""
-      setProductImage(null)
-      setModelImage(null)
-      setPrompt("")
-    } catch (error) {
-      console.error("Upload error:", error.message)
-      toast.error("Error uploading file")
+      const generateData = await generateRes.json();
+
+      if (!generateRes.ok) {
+        throw new Error(generateData.error || 'Generation failed');
+      }
+
+      setGeneratedUrl(generateData.data.url);
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Please try again.');
     } finally {
-      setTimeout(() => setProgress(0), 1000) // Let user see 100% before reset
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
   return (
-    <div className="bg-background text-on-background font-body min-h-screen flex flex-col">
+    <div className="min-h-screen p-6 md:p-10">
+      <div className="max-w-5xl mx-auto space-y-10">
 
-      <div className="flex flex-1 overflow-hidden">
+        {/* Header */}
+        <header className="space-y-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-white">
+            Generator Hub
+          </h1>
+          <p className="text-gray-400 max-w-xl">
+            Transform your product concepts into professional ad visuals with AI.
+          </p>
+        </header>
 
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-        {/* Main */}
-        <main className="flex-1 overflow-y-auto bg-surface p-8">
-          <div className="max-w-5xl mx-auto space-y-12">
+          {/* Left — Controls */}
+          <div className="space-y-6">
 
-            {/* Header */}
-            <header className="space-y-2">
-              <h1 className="text-4xl md:text-5xl font-extrabold font-headline">
-                Generator Hub
-              </h1>
-              <p className="text-on-surface-variant max-w-2xl">
-                Transform your product concepts into professional visuals.
-              </p>
-            </header>
-
-            {/* Upload Section */}
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-surface-container-low p-6 rounded-lg border-2 border-dashed border-outline-variant/20 hover:border-primary/50">
-                <h3 className="font-bold mb-6">Product Image</h3>
-
-                <label className="aspect-video bg-surface-container-high rounded-xl flex flex-col items-center justify-center gap-4 cursor-pointer">
-                  <div className="w-12 h-12 rounded-full bg-surface-bright flex items-center justify-center">
-                    +
-                  </div>
-
-                  <input
-                    type="file"
-                    ref={inputRef}
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => setProductImage(e.target?.files?.[0] || null)}
-                  />
-                </label>
-              </div>
-
-              <div className="bg-surface-container-low p-6 rounded-lg border-2 border-dashed border-outline-variant/20 hover:border-primary/50">
-                <h3 className="font-bold mb-6">Model Image</h3>
-
-                <label className="aspect-video bg-surface-container-high rounded-xl flex flex-col items-center justify-center gap-4 cursor-pointer">
-                  <div className="w-12 h-12 rounded-full bg-surface-bright flex items-center justify-center">
-                    +
-                  </div>
-
-                  <input
-                    type="file"
-                    ref={inputRef}
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => setModelImage(e.target?.files?.[0] || null)}
-                  />
-                </label>
-              </div>
-
-            </section>
+            {/* Image Upload */}
+            <div className="p-5 rounded-xl bg-white/5 border border-white/10">
+              <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                <Upload className="w-4 h-4" />
+                Reference Image (Optional)
+              </h3>
+              <label className="flex flex-col items-center justify-center gap-3 aspect-video bg-white/5 border-2 border-dashed border-white/15 rounded-xl cursor-pointer hover:border-white/30 transition">
+                {productPreview ? (
+                  <img src={productPreview} alt="Preview" className="w-full h-full object-cover rounded-xl" />
+                ) : (
+                  <>
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white text-lg">+</div>
+                    <span className="text-sm text-gray-400">Click to upload</span>
+                  </>
+                )}
+                <input
+                  type="file"
+                  ref={inputRef}
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+              </label>
+            </div>
 
             {/* Prompt */}
-            <section className="space-y-6">
-              <div className="flex justify-between">
-                <label className="font-bold text-lg">
-                  Creative Direction
-                </label>
-                <span className="text-xs text-gray-400">0 / 500</span>
+            <div className="p-5 rounded-xl bg-white/5 border border-white/10">
+              <div className="flex justify-between mb-3">
+                <label className="font-semibold text-white">Creative Direction</label>
+                <span className="text-xs text-gray-500">{prompt.length} / 500</span>
               </div>
-
               <textarea
-                className="w-full h-40 bg-surface-container-high rounded-lg p-6 resize-none"
-                placeholder="Describe how the product should appear..."
+                className="w-full h-32 bg-white/5 border border-white/10 rounded-lg p-4 resize-none text-white placeholder-gray-500 focus:outline-none focus:border-white/30 transition"
+                placeholder="Describe your ad concept..."
+                maxLength={500}
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
               />
+            </div>
 
-              
-            </section>
+            {/* Error message */}
+            {error && (
+              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                {error}
+              </div>
+            )}
 
-            {/* CTA */}
-            <footer className="flex flex-col items-center gap-4 py-8">
-              <button
-                disabled={loading}
-                className={`w-full max-w-md py-5 rounded-lg font-bold transition-colors ${
-                  loading
-                    ? "bg-gray-700 text-gray-400 cursor-not-allowed opacity-50"
-                    : "bg-primary text-on-primary cursor-pointer hover:bg-primary-dark"
-                }`}
-                onClick={uploadFiles}
-              >
-                {loading ? "Generating..." : "Generate Image"}
-              </button>
-              <p className="text-xs text-gray-400">
-                Upload images and provide a prompt to unlock generation
-              </p>
-            </footer>
-
+            {/* Generate Button */}
+            <button
+              disabled={loading}
+              className={`w-full py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition ${
+                loading
+                  ? 'bg-white/5 text-gray-500 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-500 hover:to-indigo-500 cursor-pointer'
+              }`}
+              onClick={handleGenerate}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  Generate Ad
+                </>
+              )}
+            </button>
           </div>
-        </main>
+
+          {/* Right — Preview */}
+          <div className="flex items-center justify-center p-5 rounded-xl bg-white/5 border border-white/10 min-h-[400px]">
+            {generatedUrl ? (
+              <div className="space-y-4 w-full">
+                <img src={generatedUrl} alt="Generated Ad" className="w-full rounded-xl" />
+                <a
+                  href={generatedUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-center py-3 rounded-lg bg-white/10 text-white hover:bg-white/15 transition text-sm font-medium"
+                >
+                  Download Full Size
+                </a>
+              </div>
+            ) : (
+              <div className="text-center text-gray-500 space-y-3">
+                <Sparkles className="w-10 h-10 mx-auto opacity-30" />
+                <p className="text-sm">Your generated ad will appear here</p>
+              </div>
+            )}
+          </div>
+
+        </div>
       </div>
     </div>
   );

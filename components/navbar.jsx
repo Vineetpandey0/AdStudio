@@ -15,11 +15,10 @@ export default function Navbar() {
     const pathname = usePathname();
 
     const { isSignedIn, user, isLoaded } = useUser();
-    console.log(user)
     
     const links = [
         { name: 'Home', href: '/' },
-        { name: 'Agents', href: '/agents' },
+        { name: 'Dashboard', href: '/dashboard' },
         { name: 'Use Cases', href: '#use-cases' },
         { name: 'Pricing', href: '#pricing' },
         { name: 'Docs', href: '#docs' }

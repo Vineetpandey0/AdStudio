@@ -18,9 +18,11 @@ export default function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
         >
-            <a href="#logo">
-                <Image src='/assets/logo.svg' alt='logo' className='h-8.5 w-auto' width={205} height={48} />
-            </a>
+            <Link href='/'>
+                <span className="text-3xl font-semibold tracking-tight text-white">
+                    AdStudio
+                </span>
+            </Link>
 
             <div className="flex flex-wrap items-center justify-center gap-8 py-8">
                 {links.map((link, index) => (
