@@ -8,15 +8,15 @@ import { NextResponse } from 'next/server'
 import genAI from '@/lib/gemini'
 import cloudinary from '@/lib/cloudinary'
 
-const styleGuides = {
-  minimalist: 'Clean white space, simple typography, single focal point, minimal color palette (2-3 colors max), no clutter',
-  bold: 'High contrast, strong typography, vivid saturated colors, dramatic composition, eye-catching',
-  luxury: 'Dark moody backgrounds, gold or silver accents, elegant serif typography, premium product placement, cinematic lighting',
-  playful: 'Bright fun colors, rounded shapes, whimsical elements, energetic composition, friendly feel',
-  corporate: 'Professional blue/grey palette, clean layout, trustworthy imagery, clear hierarchy, business-appropriate',
-}
-
 function buildAdPrompt(userPrompt, style) {
+  const styleGuides = {
+    minimalist: 'Clean white space, simple typography, single focal point, minimal color palette (2-3 colors max), no clutter',
+    bold: 'High contrast, strong typography, vivid saturated colors, dramatic composition, eye-catching',
+    luxury: 'Dark moody backgrounds, gold or silver accents, elegant serif typography, premium product placement, cinematic lighting',
+    playful: 'Bright fun colors, rounded shapes, whimsical elements, energetic composition, friendly feel',
+    corporate: 'Professional blue/grey palette, clean layout, trustworthy imagery, clear hierarchy, business-appropriate',
+  }
+
   const styleDescription = styleGuides[style] || styleGuides['minimalist']
 
   return `Create a professional advertising image for the following:
@@ -55,6 +55,10 @@ export async function POST(request) {
       )
     }
 
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.0-flash-preview-image-generation',
+    })
+
     const parts = []
 
     // If reference image provided, fetch and include it
@@ -79,21 +83,18 @@ export async function POST(request) {
       })
     }
 
-    const result = await genAI.models.generateContent({
-      model: 'gemini-2.5-flash-image',
+    const result = await model.generateContent({
       contents: [{ role: 'user', parts }],
-      config: {
+      generationConfig: {
         responseModalities: ['IMAGE', 'TEXT'],
       },
     })
 
-    const candidates = result.candidates
+    const response = result.response
+    const candidates = response.candidates
 
     if (!candidates || candidates.length === 0) {
-      return NextResponse.json(
-        { error: 'No candidates returned from Gemini' },
-        { status: 500 }
-      )
+      throw new Error('No candidates returned from Gemini')
     }
 
     const candidate = candidates[0]
@@ -131,7 +132,13 @@ export async function POST(request) {
       const dataUri = `data:${mimeType};base64,${imageData}`
       cloudinaryResult = await cloudinary.uploader.upload(dataUri, {
         folder: 'adstudio/generated',
-        context: `prompt=${prompt.substring(0, 200)}|style=${style}|generated_at=${new Date().toISOString()}`,
+        tags: ['adstudio-generated'],
+        context: {
+          prompt: prompt.substring(0, 200),
+          style: style,
+          created_at: new Date().toISOString(),
+          source: 'gemini'
+        }
       })
     }
 
