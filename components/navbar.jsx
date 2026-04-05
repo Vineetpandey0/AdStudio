@@ -19,9 +19,9 @@ export default function Navbar() {
     const links = [
         { name: 'Home', href: '/' },
         { name: 'Dashboard', href: '/dashboard' },
-        { name: 'Use Cases', href: '#use-cases' },
-        { name: 'Pricing', href: '#pricing' },
-        { name: 'Docs', href: '#docs' }
+        { name: 'Use Cases', href: 'use-cases' },
+        { name: 'Pricing', href: 'pricing' },
+        { name: 'Docs', href: 'docs' }
     ];
 
     useEffect(() => {
