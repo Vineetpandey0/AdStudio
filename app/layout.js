@@ -21,6 +21,8 @@ export default function RootLayout({ children }) {
                     colorBackground: '#0c0721',
                     colorInputBackground: 'rgba(255, 255, 255, 0.05)',
                     colorInputText: '#fff',
+                    colorText: '#ffffff',
+                    colorTextSecondary: '#9ca3af',
                 },
                 elements: {
                     card: 'bg-white/5 border border-white/10 backdrop-blur-2xl shadow-xl',

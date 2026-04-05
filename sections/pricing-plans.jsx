@@ -2,6 +2,7 @@ import SectionTitle from "@/components/section-title";
 import { CheckIcon, CrownIcon, RocketIcon, ZapIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRef } from "react";
+import Link from "next/link";
 
 export default function PricingPlans() {
     const ref = useRef([]);
@@ -84,9 +85,11 @@ export default function PricingPlans() {
                             {item.price} <span className='text-sm font-normal'>/month</span>
                         </h3>
                         <p className='text-gray-200 mt-3'>{item.description}</p>
-                        <button className={`mt-7 rounded-md w-full btn ${item.mostPopular ? 'bg-white text-gray-800' : 'glass'}`}>
-                            {item.buttonText}
-                        </button>
+                        <Link href="/dashboard" className="w-full">
+                            <button className={`mt-7 rounded-md w-full btn ${item.mostPopular ? 'bg-white text-gray-800' : 'glass'}`}>
+                                {item.buttonText}
+                            </button>
+                        </Link>
                         <div className='mt-6 flex flex-col'>
                             {item.features.map((feature, index) => (
                                 <div key={index} className='flex items-center gap-2 py-2'>

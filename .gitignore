@@ -40,16 +40,3 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# agents
-ARCHITECTURE.md
-CLOUDINARY.md
-COMPONENTS.md
-ENV.md
-EXECUTION.md
-GEMINI.md
-PAGES.md
-PROGRESS.md
-PROJECT.md
-RULES.md
-AGENTS.md
-API.md

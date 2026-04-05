@@ -6,7 +6,6 @@ import Features from '@/sections/features';
 import HeroSection from '@/sections/hero-section';
 import PricingPlans from '@/sections/pricing-plans';
 import Testimonials from '@/sections/testimonials';
-import TrustedCompanies from '@/sections/trusted-companies';
 import WorkflowSteps from '@/sections/workflow-steps';
 import { useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
@@ -16,7 +15,6 @@ export default function Page() {
     return (
         <main className='px-4'>
             <HeroSection />
-            <TrustedCompanies />
             <Features />
             <WorkflowSteps />
             <Testimonials />

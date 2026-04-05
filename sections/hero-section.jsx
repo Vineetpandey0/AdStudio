@@ -1,5 +1,6 @@
 import { PlayCircleIcon } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function HeroSection() {
 
@@ -23,9 +24,9 @@ export default function HeroSection() {
                     transition={{ delay: 0.2, type: "spring", stiffness: 320, damping: 70, mass: 1 }}
                 >
                     <p>Create Ads in Seconds. No Skills Needed.</p>
-                    <button className="btn glass py-1 px-3 text-xs">
+                    <Link href="/dashboard" className="btn glass py-1 px-3 text-xs">
                         Try Now
-                    </button>
+                    </Link>
                 </motion.div>
                 <motion.h1 className="text-center text-4xl/13 md:text-6xl/19 mt-4 font-semibold tracking-tight max-w-3xl"
                     initial={{ y: 50, opacity: 0 }}
@@ -50,13 +51,13 @@ export default function HeroSection() {
                     viewport={{ once: true }}
                     transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
                 >
-                    <button className="btn max-md:w-full glass py-3">
+                    <Link href="/dashboard" className="btn max-md:w-full glass py-3">
                         Generate Ad
-                    </button>
-                    <button className="btn max-md:w-full glass flex items-center justify-center gap-2 py-3">
+                    </Link>
+                    <Link href="/docs" className="btn max-md:w-full glass flex items-center justify-center gap-2 py-3">
                         <PlayCircleIcon className="size-4.5" />
                         See How It Works
-                    </button>
+                    </Link>
                 </motion.div>
             </motion.section>
         </>

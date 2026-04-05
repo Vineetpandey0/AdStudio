@@ -1,5 +1,6 @@
 import { ArrowRightIcon } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function CallToAction() {
     return (
@@ -25,15 +26,17 @@ export default function CallToAction() {
             >
                 See how fast you can turn your ideas into reality. Get started for free, no credit card required.
             </motion.p>
-            <motion.button className="btn glass transition-none flex items-center gap-2 mt-8"
-                initial={{ y: 80, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ type: "spring", stiffness: 280, damping: 70, mass: 1 }}
-            >
-                Try now
-                <ArrowRightIcon className="size-4" />
-            </motion.button>
+            <Link href="/dashboard">
+                <motion.button className="btn glass transition-none flex items-center gap-2 mt-8"
+                    initial={{ y: 80, opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ type: "spring", stiffness: 280, damping: 70, mass: 1 }}
+                >
+                    Try now
+                    <ArrowRightIcon className="size-4" />
+                </motion.button>
+            </Link>
         </motion.div>
     );
 };
