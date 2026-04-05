@@ -36,6 +36,7 @@ export async function POST(request) {
     const result = await cloudinary.uploader.upload(dataUri, {
       folder: 'adstudio/uploads',
       context: `uploaded_at=${new Date().toISOString()}`,
+      timeout: 120000 // 2 minute timeout 
     })
 
     return NextResponse.json({

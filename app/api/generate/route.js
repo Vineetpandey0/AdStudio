@@ -30,6 +30,7 @@ export async function POST(request) {
       cloudinaryResult = await cloudinary.uploader.upload(imageDataUri, {
         folder: 'adstudio/generated',
         tags: ['adstudio-generated'],
+        timeout: 120000,
         context: {
           prompt: prompt.substring(0, 200),
           style: style,

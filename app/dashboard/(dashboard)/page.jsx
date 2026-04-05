@@ -31,6 +31,8 @@ const PROMPT_SUGGESTIONS = [
 
 // ─── Components ───────────────────────────────────────────────────────────────
 
+import { useUser, useClerk } from '@clerk/nextjs';
+
 function AdCard({ ad }) {
   return (
     <motion.div 
@@ -66,6 +68,9 @@ function AdCard({ ad }) {
 }
 
 export default function StudioPage() {
+  const { isSignedIn, isLoaded } = useUser();
+  const clerk = useClerk();
+
   const [productImage, setProductImage] = useState(null);
   const [productPreview, setProductPreview] = useState(null);
   const [prompt, setPrompt] = useState('');
@@ -108,8 +113,19 @@ export default function StudioPage() {
   };
 
   const handleGenerate = async () => {
+    if (!isLoaded) return;
     if (!prompt.trim()) return toast.error('Describe your ad first!');
     
+    // Check guest generation limits
+    if (!isSignedIn) {
+      const guestGenCount = parseInt(localStorage.getItem('guestGenerations') || '0', 10);
+      if (guestGenCount >= 2) {
+        toast.error('Free trial limit reached. Sign in to continue creating!', { duration: 4000 });
+        clerk.openSignIn();
+        return;
+      }
+    }
+
     setLoading(true);
     setGeneratedAd(null);
     setGenStep(1);
@@ -144,6 +160,11 @@ export default function StudioPage() {
       if (!generateRes.ok) throw new Error(generateData.error);
 
       // Step 3: Success
+      if (!isSignedIn) {
+        const guestGenCount = parseInt(localStorage.getItem('guestGenerations') || '0', 10);
+        localStorage.setItem('guestGenerations', (guestGenCount + 1).toString());
+      }
+
       setGenStep(3);
       setGeneratedAd(generateData.data);
       toast.success('Ad generated successfully!');
