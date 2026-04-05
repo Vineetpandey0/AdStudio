@@ -14,6 +14,58 @@
 
 ---
 
+## Table of Contents
+
+- [What is AdStudio?](#what-is-adstudio)
+- [Core Formula](#core-formula)
+  - [Input 1 — Text Prompt](#input-1--text-prompt)
+  - [Input 2 — Model Image](#input-2--model-image)
+  - [Input 3 — Product Image](#input-3--product-image)
+  - [Output — Ad Image or Short Ad Video](#output--ad-image-or-short-ad-video)
+- [Generation Pipeline](#generation-pipeline)
+  - [Stage 1 — Intent Parsing](#stage-1--intent-parsing)
+  - [Stage 2 — Asset Preparation](#stage-2--asset-preparation)
+  - [Stage 3 — Scene Composition](#stage-3--scene-composition)
+  - [Stage 4 — Copy & Voiceover (Video mode)](#stage-4--copy--voiceover-video-mode)
+  - [Stage 5 — Export & Delivery](#stage-5--export--delivery)
+- [Features](#features)
+  - [Prompt Intelligence Engine](#prompt-intelligence-engine)
+  - [Model Image Engine](#model-image-engine)
+  - [Product Placement Engine](#product-placement-engine)
+  - [Scene Generation](#scene-generation)
+  - [Ad Copy Generator](#ad-copy-generator)
+  - [Voiceover & Audio](#voiceover--audio)
+  - [Video Assembly Engine](#video-assembly-engine)
+  - [Brand Kit Integration](#brand-kit-integration)
+  - [Iteration & Refinement](#iteration--refinement)
+  - [Platform Format Export](#platform-format-export)
+  - [Ad Performance Hints](#ad-performance-hints)
+  - [Team & Collaboration](#team--collaboration)
+- [Output Format Matrix](#output-format-matrix)
+- [Use Cases](#use-cases)
+- [AI Engine](#ai-engine)
+- [Competitive Position](#competitive-position)
+- [Quick Start](#quick-start)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Basic Usage](#basic-usage)
+- [Project Structure](#project-structure)
+- [Technology Stack](#technology-stack)
+- [Key Libraries & Their Usage](#key-libraries--their-usage)
+- [REST API](#rest-api)
+- [Configuration](#configuration)
+- [Development](#development)
+- [Deployment](#deployment)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [Roadmap](#roadmap)
+- [Support & Resources](#support--resources)
+- [License](#license)
+- [Maintainer](#maintainer)
+- [Acknowledgments](#acknowledgments)
+
+---
+
 ## What is AdStudio?
 
 **AdStudio** is an AI-powered ad creation platform that turns three simple inputs — a **text prompt**, a **model image**, and a **product image** — into a polished ad image or short video in minutes.
@@ -92,7 +144,7 @@ The text prompt is processed by a large language model to produce a structured *
 - Both assets are encoded and passed as conditioning inputs to the visual model
 
 ### Stage 3 — Scene Composition
-A conditioned image diffusion model generates the full ad scene — background environment, lighting, depth of field, shadows, and reflections — with the model and product composited in naturally. Multiple variants are generated in parallel.
+A conditioned image diffusion model (Hugging Face Stable Diffusion) generates the full ad scene — background environment, lighting, depth of field, shadows, and reflections — with the model and product composited in naturally. Multiple variants are generated in parallel.
 
 ### Stage 4 — Copy & Voiceover (Video mode)
 For video output, an LLM generates a short ad script (hook → body → CTA). Text-to-speech produces a natural voiceover. Captions are auto-timed and styled. Background music is selected or generated to match the mood.
@@ -274,9 +326,9 @@ A FMCG brand running campaigns across India, UAE, and UK needs the same ad local
 
 | Capability | Model / Service |
 |---|---|
-| Prompt parsing, copy generation, script writing | LLM (Google Gemini) |
-| Image generation and scene composition | Stable Diffusion / FLUX |
-| Background removal and subject segmentation | SAM 2 / REMBG |
+| Image generation and scene composition | Hugging Face (Stable Diffusion XL) |
+| Prompt parsing, copy generation (fallback) | LLM |
+| Background removal and subject segmentation | Cloudinary / SAM 2 |
 | Voiceover synthesis | ElevenLabs / TTS |
 | Media hosting and CDN delivery | Cloudinary |
 
@@ -305,7 +357,7 @@ A FMCG brand running campaigns across India, UAE, and UK needs the same ad local
 - **npm** 9+ or **yarn**
 - Modern web browser (Chrome, Firefox, Safari, Edge)
 - API keys for:
-  - Google Generative AI (Gemini)
+  - Hugging Face (Image Generation)
   - Cloudinary (media hosting)
   - Clerk (authentication)
 
@@ -332,9 +384,8 @@ A FMCG brand running campaigns across India, UAE, and UK needs the same ad local
    # Next.js
    NEXT_PUBLIC_API_URL=http://localhost:3000
 
-   # Google Generative AI (Gemini)
-   GOOGLE_API_KEY=your_google_api_key
-   NEXT_PUBLIC_GOOGLE_API_KEY=your_public_google_key
+   # Hugging Face
+   HUGGINGFACE_API_KEY=your_hf_access_token
 
    # Cloudinary
    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
@@ -426,7 +477,7 @@ A FMCG brand running campaigns across India, UAE, and UK needs the same ad local
 │   └── section-title.jsx            # Section title component
 ├── 📂 lib/                          # Utility libraries
 │   ├── cloudinary.js                # Image/video hosting integration
-│   └── gemini.js                    # Gemini AI API wrapper
+│   └── imageService.js              # Hugging Face Inference API service
 ├── 📂 sections/                     # Page section components
 │   ├── call-to-action.jsx           # CTA section
 │   ├── features.jsx                 # Features showcase
@@ -470,9 +521,8 @@ A FMCG brand running campaigns across India, UAE, and UK needs the same ad local
 - **Lucide React** — Beautiful icon library
 
 ### Backend & APIs
-- **Next.js API Routes** — Serverless functions for video generation and uploads
-- **Google Generative AI (Gemini)** — AI models for script generation and content creation
-- **Google GenAI SDK** — Additional generative AI capabilities
+- **Next.js API Routes** — Serverless functions for image generation and uploads
+- **Hugging Face Inference API** — Stable Diffusion XL for high-quality ad visuals
 - **Cloudinary 2.9** — Media hosting, optimisation, and transformations
 - **Axios** — HTTP client for API requests
 
@@ -494,7 +544,7 @@ A FMCG brand running campaigns across India, UAE, and UK needs the same ad local
 
 **Zustand** manages global application state for user preferences, project data, and UI state with minimal boilerplate.
 
-**Google Generative AI** powers the core ad generation by creating scripts, descriptions, and content based on user prompts.
+**Hugging Face Stable Diffusion** powers the core visual ad generation — producing scenes, compositing model and product images, and generating multiple creative variants from structured prompts via the Hugging Face Inference API.
 
 **Cloudinary** handles image and video uploads, optimisation, and CDN distribution for fast media delivery.
 
@@ -566,9 +616,8 @@ Create a `.env.local` file in the root directory:
 # Next.js
 NEXT_PUBLIC_API_URL=http://localhost:3000
 
-# Google Generative AI (Gemini API)
-GOOGLE_API_KEY=your_google_api_key_here
-NEXT_PUBLIC_GOOGLE_API_KEY=your_public_google_api_key
+# Hugging Face (Inference API)
+HUGGINGFACE_API_KEY=your_hf_access_token_here
 
 # Cloudinary (Media Hosting)
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloudinary_name
@@ -586,10 +635,12 @@ CLERK_AFTER_SIGN_UP_URL=/dashboard
 
 ### Getting API Keys
 
-**Google Generative AI:**
-1. Visit [Google AI Studio](https://aistudio.google.com)
-2. Create an API key
-3. Add to `.env.local`
+**Hugging Face:**
+1. Visit [Hugging Face](https://huggingface.co)
+2. Sign up or log in to your account
+3. Go to Settings → Access Tokens
+4. Create a new token with `read` (or `write`) permissions
+5. Add to `.env.local` — use models like `stabilityai/stable-diffusion-xl-base-1.0` or `runwayml/stable-diffusion-v1-5` via the Inference API
 
 **Cloudinary:**
 1. Sign up at [Cloudinary](https://cloudinary.com)
@@ -695,8 +746,9 @@ npm run dev -- -p 3001
 
 ### API Key Issues
 - Verify all API keys in `.env.local` are correct
-- Check API quotas and billing status
-- Ensure API keys have proper permissions
+- Check Hugging Face token permissions and rate limits
+- Ensure your Hugging Face account has access to the selected models (some require accepting model terms)
+- Check Cloudinary and Clerk quotas and billing status
 
 ### Build Errors
 ```bash
@@ -770,7 +822,7 @@ GitHub: [@Vineetpandey0](https://github.com/Vineetpandey0)
 ## Acknowledgments
 
 - Built with [Next.js 16](https://nextjs.org) and [Turbopack](https://turbo.build/pack)
-- AI powered by [Google Generative AI (Gemini)](https://deepmind.google/technologies/gemini/)
+- AI powered by [Hugging Face (Stable Diffusion XL)](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0)
 - Authentication by [Clerk](https://clerk.com)
 - Media hosting by [Cloudinary](https://cloudinary.com)
 - Styling with [Tailwind CSS 4](https://tailwindcss.com)

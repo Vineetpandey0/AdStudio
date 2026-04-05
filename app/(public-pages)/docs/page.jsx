@@ -309,11 +309,11 @@ export default function DocsPage() {
                             <strong className="text-white">AdStudio</strong> is an AI-powered advertisement generation platform built on Next.js. It allows anyone — from independent creators to large marketing teams — to generate stunning, professional ad images in seconds using a simple text prompt.
                         </p>
                         <p>
-                            Under the hood, AdStudio uses <strong className="text-white">Google Gemini 2.0 Flash</strong> to generate images and <strong className="text-white">Cloudinary</strong> to store, manage, and deliver them at scale. There is no traditional backend database — everything is stored as metadata inside Cloudinary.
+                            Under the hood, AdStudio uses <strong className="text-white">Hugging Face Inference API</strong> to generate images and <strong className="text-white">Cloudinary</strong> to store, manage, and deliver them at scale. There is no traditional backend database — everything is stored as metadata inside Cloudinary.
                         </p>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
                             {[
-                                { icon: ZapIcon, title: 'Instant Generation', desc: 'Ad images in 5–15 seconds via Gemini AI.' },
+                                { icon: ZapIcon, title: 'Instant Generation', desc: 'Ad images in 10–25 seconds via HF Stable Diffusion.' },
                                 { icon: ImageIcon, title: '5 Visual Styles', desc: 'Minimalist, Bold, Luxury, Playful, Corporate.' },
                                 { icon: LayoutDashboardIcon, title: 'Ad Dashboard', desc: 'View, preview, and manage all your generated ads.' },
                             ].map((f, i) => (
@@ -348,10 +348,10 @@ Highlight: 40-hour battery life and studio-quality sound.`} />
                             Select one of the five available styles. <strong className="text-white">Bold</strong> works well for consumer products; <strong className="text-white">Minimalist</strong> for SaaS or clean brands.
                         </Step>
                         <Step number="5" title="(Optional) Upload a reference image">
-                            Upload a product photo or brand image. Gemini will use it for style context while generating the ad.
+                            Upload a product photo or brand image. Hugging Face will use it for style context while generating the ad.
                         </Step>
                         <Step number="6" title="Click Generate">
-                            Hit <strong className="text-white">Generate Ad</strong>. Wait 5–15 seconds. Your ad will appear and automatically save to your dashboard.
+                            Hit <strong className="text-white">Generate Ad</strong>. Wait 10–25 seconds. Your ad will appear and automatically save to your dashboard.
                         </Step>
                         <Callout type="success">
                             Your ad is automatically saved to Cloudinary and appears in your <strong>/dashboard</strong>. No manual saving needed.
@@ -379,7 +379,7 @@ Highlight: 40-hour battery life and studio-quality sound.`} />
                             ))}
                         </div>
                         <Callout type="warning">
-                            API routes (<code>/api/*</code>) do <strong>not</strong> enforce Clerk authentication directly — they rely on server-side environment variable secrets. Never expose your <code>GEMINI_API_KEY</code> or <code>CLOUDINARY_API_SECRET</code> to the client.
+                            API routes (<code>/api/*</code>) do <strong>not</strong> enforce Clerk authentication directly — they rely on server-side environment variable secrets. Never expose your <code>HUGGINGFACE_API_KEY</code> or <code>CLOUDINARY_API_SECRET</code> to the client.
                         </Callout>
                     </DocSection>
 
@@ -391,9 +391,8 @@ Highlight: 40-hour battery life and studio-quality sound.`} />
                         <div className="my-6 space-y-4">
                             {[
                                 { label: 'Prompt Input', desc: 'A text area for your product/campaign description. Be as detailed as possible — include target audience, platform, and key selling points.' },
-                                { label: 'Style Selector', desc: 'Choose from 5 visual styles. Each maps to a carefully tuned prompt template sent to Gemini.' },
-                                { label: 'Image Uploader', desc: 'Optional. Upload a PNG/JPEG/WEBP reference image (max 10MB). It is uploaded to Cloudinary (/uploads), then passed to Gemini as base64 inline data.' },
-                                { label: 'Generate Button', desc: 'Triggers a POST to /api/generate. Disabled during loading. Shows a spinner while Gemini processes.' },
+                                { label: 'Image Uploader', desc: 'Optional. Upload a PNG/JPEG/WEBP reference image (max 10MB). It is uploaded to Cloudinary (/uploads), then passed to Hugging Face as base64 data.' },
+                                { label: 'Generate Button', desc: 'Triggers a POST to /api/generate. Disabled during loading. Shows a spinner while Hugging Face processes.' },
                                 { label: 'Result Viewer', desc: 'Displays the generated image inline. Shows the Cloudinary URL, the prompt used, and a "View in Dashboard" link.' },
                             ].map((item, i) => (
                                 <div key={i} className="glass rounded-xl p-4">
@@ -405,13 +404,13 @@ Highlight: 40-hour battery life and studio-quality sound.`} />
                             ))}
                         </div>
                         <Callout type="info">
-                            Generation typically takes <strong>5–15 seconds</strong>. The API call is synchronous — the route handler waits for Gemini to respond before returning. Always show a loading state in custom integrations.
+                            Generation typically takes <strong>10–25 seconds</strong>. The API call is synchronous — the route handler waits for Hugging Face to respond before returning. Always show a loading state in custom integrations.
                         </Callout>
                     </DocSection>
 
                     {/* ── VISUAL STYLES ── */}
                     <DocSection id="styles" title="Visual Styles">
-                        <p>AdStudio supports five visual styles, each with a unique prompt template sent to Gemini:</p>
+                        <p>AdStudio supports five visual styles, each with a unique prompt template sent to Hugging Face:</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-5">
                             {[
                                 { name: 'Minimalist', desc: 'Clean white space, simple typography, single focal point, minimal color palette (2–3 colors). Perfect for SaaS, lifestyle, and luxury goods.' },
@@ -443,7 +442,7 @@ await fetch('/api/generate', {
                     {/* ── REFERENCE IMAGE ── */}
                     <DocSection id="reference-image" title="Reference Images">
                         <p>
-                            You can upload a reference image to guide Gemini's output. This is useful for maintaining brand consistency, matching a specific visual direction, or using an existing product photo as context.
+                            You can upload a reference image to guide Hugging Face's output. This is useful for maintaining brand consistency, matching a specific visual direction, or using an existing product photo as context.
                         </p>
                         <h3 className="text-base font-semibold text-white mt-6 mb-3">Upload Flow</h3>
                         <Step number="1" title="Upload the image (POST /api/upload)">
@@ -509,7 +508,7 @@ const { data } = await res.json();
     "prompt": "Premium headphones for remote workers",
     "style": "minimalist",
     "created_at": "2026-04-05T12:00:00Z",
-    "source": "gemini"
+    "source": "huggingface"
   }
 }`} />
                         <p>You can use the Cloudinary URL directly in your campaigns, landing pages, or social media posts. All images are served through Cloudinary's CDN with automatic optimization (<code className="bg-white/10 text-blue-200 px-1 py-0.5 rounded text-xs">f_auto,q_auto</code>).</p>
@@ -533,7 +532,7 @@ adstudio/generated/xyzABC123`} />
 
                     {/* ── API: GENERATE ── */}
                     <DocSection id="api-generate" title="POST /api/generate" badge="Core">
-                        <p>The primary generation endpoint. Calls Gemini AI and saves the result to Cloudinary.</p>
+                        <p>The primary generation endpoint. Calls Hugging Face AI and saves the result to Cloudinary.</p>
                         <h3 className="text-base font-semibold text-white mt-6 mb-3">Request</h3>
                         <ParamTable params={[
                             { name: 'prompt', type: 'string', required: true, desc: 'Product/campaign description. Be as specific as possible.' },
@@ -635,8 +634,8 @@ CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=123456789012345
 CLOUDINARY_API_SECRET=your_api_secret
 
-# Google Gemini (AI generation)
-GEMINI_API_KEY=AIza...`} />
+# Hugging Face (AI generation)
+HUGGINGFACE_API_KEY=hf_...`} />
                         <div className="glass rounded-xl overflow-hidden my-4">
                             <table className="w-full text-xs">
                                 <thead>
@@ -653,7 +652,7 @@ GEMINI_API_KEY=AIza...`} />
                                         ['CLOUDINARY_CLOUD_NAME', 'Server only', 'cloudinary.com → Dashboard'],
                                         ['CLOUDINARY_API_KEY', 'Server only', 'cloudinary.com → Dashboard'],
                                         ['CLOUDINARY_API_SECRET', 'Server only', 'cloudinary.com → Dashboard'],
-                                        ['GEMINI_API_KEY', 'Server only', 'aistudio.google.com → API Keys'],
+                                        ['HUGGINGFACE_API_KEY', 'Server only', 'huggingface.co/settings/tokens'],
                                     ].map(([name, exposure, source], i) => (
                                         <tr key={i} className={`border-b border-white/5 ${i % 2 === 0 ? '' : 'bg-white/[0.02]'}`}>
                                             <td className="px-4 py-3 font-mono text-blue-200">{name}</td>
@@ -665,7 +664,7 @@ GEMINI_API_KEY=AIza...`} />
                             </table>
                         </div>
                         <Callout type="warning">
-                            <code>GEMINI_API_KEY</code> and <code>CLOUDINARY_API_SECRET</code> are server-only. Never prefix them with <code>NEXT_PUBLIC_</code> or use them in client components.
+                            <code>HUGGINGFACE_API_KEY</code> and <code>CLOUDINARY_API_SECRET</code> are server-only. Never prefix them with <code>NEXT_PUBLIC_</code> or use them in client components.
                         </Callout>
                     </DocSection>
 
@@ -675,9 +674,9 @@ GEMINI_API_KEY=AIza...`} />
                         <div className="my-5 space-y-3">
                             {[
                                 { title: 'Free Plan', desc: '5 ad generations per calendar month. Resets on the 1st of each month.' },
-                                { title: 'Professional Plan', desc: 'Unlimited generations. Subject to Gemini API fair-use policy (no hard limit for normal usage).' },
-                                { title: 'Gemini API Quotas', desc: 'Google enforces its own rate limits. On HTTP 429 errors, AdStudio returns a user-friendly "try again" message.' },
-                                { title: 'Cloudinary Upload Size', desc: 'Reference images: 10MB max. Generated images from Gemini: typically 1–4MB (losslessly stored).' },
+                                { title: 'Professional Plan', desc: 'Unlimited generations. Subject to Hugging Face API fair-use policy.' },
+                                { title: 'Hugging Face API Quotas', desc: 'Hugging Face enforces rate limits on the free tier. On HTTP 429 errors, AdStudio returns a user-friendly "try again" message.' },
+                                { title: 'Cloudinary Upload Size', desc: 'Reference images: 10MB max. Generated images: typically 1–4MB (losslessly stored).' },
                             ].map((item, i) => (
                                 <div key={i} className="glass rounded-xl p-4">
                                     <p className="text-xs font-semibold text-white mb-1">{item.title}</p>
@@ -686,7 +685,7 @@ GEMINI_API_KEY=AIza...`} />
                             ))}
                         </div>
                         <Callout type="info">
-                            If you hit the Gemini quota limit, wait 60 seconds and try again. Enterprise plans include priority queue access.
+                            If you hit the Hugging Face quota limit, wait a few minutes and try again. Enterprise plans include priority queue access.
                         </Callout>
                     </DocSection>
 
