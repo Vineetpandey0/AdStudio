@@ -1,40 +1,12 @@
 /**
  * POST /api/generate
- * Purpose: Generate an ad image using Gemini AI, upload result to Cloudinary
+ * Purpose: Generate an ad image using Hugging Face Stable Diffusion, upload result to Cloudinary
  * See: API.md for full spec
  */
 
 import { NextResponse } from 'next/server'
-import genAI from '@/lib/gemini'
 import cloudinary from '@/lib/cloudinary'
-
-function buildAdPrompt(userPrompt, style) {
-  const styleGuides = {
-    minimalist: 'Clean white space, simple typography, single focal point, minimal color palette (2-3 colors max), no clutter',
-    bold: 'High contrast, strong typography, vivid saturated colors, dramatic composition, eye-catching',
-    luxury: 'Dark moody backgrounds, gold or silver accents, elegant serif typography, premium product placement, cinematic lighting',
-    playful: 'Bright fun colors, rounded shapes, whimsical elements, energetic composition, friendly feel',
-    corporate: 'Professional blue/grey palette, clean layout, trustworthy imagery, clear hierarchy, business-appropriate',
-  }
-
-  const styleDescription = styleGuides[style] || styleGuides['minimalist']
-
-  return `Create a professional advertising image for the following:
-
-Product/Campaign Description: ${userPrompt}
-
-Visual Style Requirements: ${styleDescription}
-
-Additional Requirements:
-- Make it suitable for use as a digital advertisement
-- High quality, photorealistic or well-crafted illustration as appropriate
-- Composition should have clear visual hierarchy
-- Leave some space for text overlay if needed
-- No watermarks, no text unless it's part of the design concept
-- Aspect ratio: square (1:1) preferred
-
-Generate a compelling, professional ad visual.`
-}
+import { generateAdImage } from '@/lib/imageService'
 
 export async function POST(request) {
   try {
@@ -48,96 +20,21 @@ export async function POST(request) {
       )
     }
 
-    if (!process.env.GEMINI_API_KEY) {
-      return NextResponse.json(
-        { error: 'Gemini API key not configured. Add GEMINI_API_KEY to .env' },
-        { status: 500 }
-      )
-    }
-
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash-preview-image-generation',
-    })
-
-    const parts = []
-
-    // If reference image provided, fetch and include it
-    if (referenceImageUrl) {
-      const imageResponse = await fetch(referenceImageUrl)
-      const imageBuffer = await imageResponse.arrayBuffer()
-      const base64Image = Buffer.from(imageBuffer).toString('base64')
-      const contentType = imageResponse.headers.get('content-type') || 'image/jpeg'
-
-      parts.push({
-        inlineData: {
-          mimeType: contentType,
-          data: base64Image,
-        },
-      })
-      parts.push({
-        text: `Using this reference image for brand/style context, ${buildAdPrompt(prompt, style)}`,
-      })
-    } else {
-      parts.push({
-        text: buildAdPrompt(prompt, style),
-      })
-    }
-
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts }],
-      generationConfig: {
-        responseModalities: ['IMAGE', 'TEXT'],
-      },
-    })
-
-    const response = result.response
-    const candidates = response.candidates
-
-    if (!candidates || candidates.length === 0) {
-      throw new Error('No candidates returned from Gemini')
-    }
-
-    const candidate = candidates[0]
-
-    if (candidate.finishReason === 'SAFETY') {
-      return NextResponse.json(
-        { error: 'The prompt was flagged by safety filters. Please revise your description.' },
-        { status: 400 }
-      )
-    }
-
-    // Find image in response parts
-    let imageData = null
-    let mimeType = 'image/png'
-
-    for (const part of candidate.content.parts) {
-      if (part.inlineData) {
-        imageData = part.inlineData.data
-        mimeType = part.inlineData.mimeType
-        break
-      }
-    }
-
-    if (!imageData) {
-      return NextResponse.json(
-        { error: 'No image returned from Gemini. It may have been blocked by safety filters.' },
-        { status: 500 }
-      )
-    }
+    // Call Hugging Face Image Service
+    const imageDataUri = await generateAdImage({ prompt, style, referenceImageUrl })
 
     // Upload to Cloudinary
     let cloudinaryResult = null
 
     if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY) {
-      const dataUri = `data:${mimeType};base64,${imageData}`
-      cloudinaryResult = await cloudinary.uploader.upload(dataUri, {
+      cloudinaryResult = await cloudinary.uploader.upload(imageDataUri, {
         folder: 'adstudio/generated',
         tags: ['adstudio-generated'],
         context: {
           prompt: prompt.substring(0, 200),
           style: style,
           created_at: new Date().toISOString(),
-          source: 'gemini'
+          source: 'huggingface'
         }
       })
     }
@@ -145,7 +42,7 @@ export async function POST(request) {
     return NextResponse.json({
       success: true,
       data: {
-        url: cloudinaryResult?.secure_url || `data:${mimeType};base64,${imageData}`,
+        url: cloudinaryResult?.secure_url || imageDataUri,
         publicId: cloudinaryResult?.public_id || null,
         prompt,
         style,
@@ -160,15 +57,23 @@ export async function POST(request) {
         { status: 400 }
       )
     }
-    if (error.message?.includes('quota') || error.status === 429) {
+    
+    if (error.message?.includes('Rate limit') || error.message?.includes('quota') || error.status === 429) {
       return NextResponse.json(
         { error: 'Generation limit reached. Please try again in a moment.' },
         { status: 429 }
       )
     }
 
+    if (error.message?.includes('loading')) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 503 }
+      )
+    }
+
     return NextResponse.json(
-      { error: 'Image generation failed. Please try again.' },
+      { error: error.message || 'Image generation failed. Please try again.' },
       { status: 500 }
     )
   }

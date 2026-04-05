@@ -196,7 +196,7 @@ export default function StudioPage() {
             </div>
             <p className="text-gray-400 max-w-lg">
               Craft professional, scroll-stopping ad creatives in seconds. 
-              Powered by <span className="text-blue-400 font-semibold">Gemini 2.0</span>.
+              Powered by <span className="text-blue-400 font-semibold">Stable Diffusion XL</span>.
             </p>
           </motion.div>
           
@@ -428,7 +428,7 @@ export default function StudioPage() {
                 {/* Footer status */}
                 <div className="px-6 py-4 border-t border-white/5 text-[10px] text-gray-600 flex justify-between uppercase tracking-widest font-black">
                    <span>AdStudio Engine v1.0</span>
-                   {generatedAd && <span>{selectedStyle} / 2.0-Flash</span>}
+                   {generatedAd && <span>{selectedStyle} / SD-XL</span>}
                 </div>
               </div>
 
