@@ -68,7 +68,7 @@
 
 ## What is AdStudio?
 
-**AdStudio** is an AI-powered ad creation platform that turns three simple inputs — a **text prompt**, a **model image**, and a **product image** — into a polished ad image or short video in minutes.
+**AdStudio** is an AI-powered ad creation platform that turns three simple inputs — a **text prompt**, a **model image**, and a **product image** — into a polished ad image or short video in minutes(currently under build).
 
 ```
 Prompt  +  Model Image  +  Product Image  →  AI Ad Image / Short Ad Video
